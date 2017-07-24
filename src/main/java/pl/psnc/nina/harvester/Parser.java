@@ -20,21 +20,30 @@ public class Parser {
     public List<String> webPage = new ArrayList<>();
     private int numberOfPages;
 
-    private List listaFilmow = new ArrayList(); //nowe odczytane filmy
-    private Map<String, Film> mapaFilmow = new LinkedHashMap<>();
+    private List filmList = new ArrayList(); //nowe odczytane filmy
+    private Map<String, Film> mapOfFilms = new LinkedHashMap<>();
 
     public Parser() throws IOException, FileNotFoundException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InterruptedException, InvalidFormatException {
         odczyt();
     }
-
+/**
+ * 
+ * @throws IOException
+ * @throws FileNotFoundException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws NoSuchFieldException
+ * @throws InterruptedException
+ * @throws InvalidFormatException 
+ */
     public void odczyt() throws IOException, FileNotFoundException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InterruptedException, InvalidFormatException {
 
         ustawIloscStron("http://ninateka.pl/filmy?page=1");
-        System.out.println("ilosc stron: " + numberOfPages);
+        System.out.println("number of pages: " + numberOfPages);
         zmianaAdresow();
 
         excel e = new excel();
-        mapaFilmow = e.readCsv();
+        mapOfFilms = e.readCsv();
 
         odczytajDaneIZapisz(this, e);
 
@@ -43,42 +52,37 @@ public class Parser {
     public void odczytajDaneIZapisz(Parser t, excel e) throws IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InterruptedException {
 
         long start = System.currentTimeMillis();
-       
-        
+     
         // !!!!!!!!
         for (int i = 0; i < 4; i++) {
 
-            long start1 = System.currentTimeMillis();
-            System.out.println("i: " + i);
             t.odczytStronIPodstron(webPage.get(i));
-            e.writeCsv(listaFilmow);
+            e.writeCsv(filmList);
 
-            listaFilmow.clear();
-            long end1 = System.currentTimeMillis();
+            filmList.clear();
         }
         long end = System.currentTimeMillis();
 
-        System.out.println("czas calkowity: " + (end - start));
-        System.out.println("koniec odczytu");
+        System.out.println("total time: " + (end - start));
     }
 
     // zwraca jedna kategorie wraz z danymi
     public String zwrocKategorieIDane(Element e2) {
-        String dane = "";
-        String kategoriaDane = null;
+        String data = "";
+        String categoryAndData = null;
         String[] temp = e2.toString().split("span>");
 
         if (temp.length > 1) {
             int o = temp[1].indexOf("<");
-            kategoriaDane = temp[1].substring(0, o);
+            categoryAndData = temp[1].substring(0, o);
         }
 
         // dane 
         if (temp.length > 2) {
             if (temp[2].length() > 7) {
-                String pra = temp[2].substring(0, 8);
+                String pre = temp[2].substring(0, 8);
 
-                if (pra.equals(" <a href")) {
+                if (pre.equals(" <a href")) {
 
                     String html = temp[2];
                     String test;
@@ -87,26 +91,26 @@ public class Parser {
                     Elements content3 = doc.select("a");
 
                     for (Element e3 : content3) {
-                        Node dane1 = e3.unwrap();
-                        String daneD = dane1.toString();
-                        if (daneD.length() >= 2) {
-                            if (daneD.substring(0, 2).contains("\n")) {
-                                daneD = daneD.substring(1, daneD.length());
+                        Node data1 = e3.unwrap();
+                        String dataD = data1.toString();
+                        if (dataD.length() >= 2) {
+                            if (dataD.substring(0, 2).contains("\n")) {
+                                dataD = dataD.substring(1, dataD.length());
                             }
                         }
-                        dane = dane + "," + daneD;
+                        data = data + "," + dataD;
                     }
                 } else {
                     int o = temp[2].indexOf("<");
 
                     if (o != -1 && !temp[2].equals("<br></li>")) {
-                        dane = dane + "," + temp[2].substring(1, o);
+                        data = data + "," + temp[2].substring(1, o);
                     }
                 }
             }
-            kategoriaDane = kategoriaDane + dane;
+            categoryAndData = categoryAndData + data;
         }
-        return kategoriaDane;
+        return categoryAndData;
     }
 
     // tworzy obiekt z tymi danymi 
@@ -115,88 +119,88 @@ public class Parser {
         Film film = new Film();
         Document d2 = Jsoup.connect(link).get();
 
-        int pozycja = nazwa.indexOf("|");
-        if (pozycja != -1) {
-            nazwa = nazwa.substring(0, pozycja);
+        int index = nazwa.indexOf("|");
+        if (index != -1) {
+            nazwa = nazwa.substring(0, index);
         }
 
         for (int j = 0; j < mul.size(); j++) {
             if (mul.get(j) != null) {
-                String czesc = mul.get(j);
-                if (czesc != null) {
-                    int pole = czesc.indexOf(":");
+                String part = mul.get(j);
+                if (part != null) {
+                    int pole = part.indexOf(":");
 
-                    if (pole != -1 && pole + 1 < czesc.length()) {
+                    if (pole != -1 && pole + 1 < part.length()) {
 
-                        switch (czesc.substring(0, pole)) {
+                        switch (part.substring(0, pole)) {
                             case "czas trwania":
-                                film.setCzasTrwania(czesc.substring(pole + 2, czesc.length()));
+                                film.setCzasTrwania(part.substring(pole + 2, part.length()));
                                 break;
                             case "lektor":
-                                film.setLektor(czesc.substring(pole + 2, czesc.length()));
+                                film.setLektor(part.substring(pole + 2, part.length()));
                                 break;
                             case "kategoria":
-                                film.setKategoria(czesc.substring(pole + 2, czesc.length()));
+                                film.setKategoria(part.substring(pole + 2, part.length()));
                                 break;
                             case "gatunek":
-                                film.setGatunek(czesc.substring(pole + 2, czesc.length()));
+                                film.setGatunek(part.substring(pole + 2, part.length()));
                                 break;
                             case "linkPriv":
-                                film.setLink(czesc.substring(pole + 2, czesc.length()));
+                                film.setLink(part.substring(pole + 2, part.length()));
                                 break;
                             case "język":
-                                film.setJęzyk(czesc.substring(pole + 2, czesc.length()));
+                                film.setJęzyk(part.substring(pole + 2, part.length()));
                                 break;
                             case "reżyseria":
-                                film.setReżyseria(czesc.substring(pole + 2, czesc.length()));
+                                film.setReżyseria(part.substring(pole + 2, part.length()));
                                 break;
                             case "scenariusz":
-                                film.setScenariusz(czesc.substring(pole + 2, czesc.length()));
+                                film.setScenariusz(part.substring(pole + 2, part.length()));
                                 break;
                             case "rok produkcji":
-                                film.setRokProdukcji(czesc.substring(pole + 2, czesc.length()));
+                                film.setRokProdukcji(part.substring(pole + 2, part.length()));
                                 break;
                             case "producent":
-                                film.setProducent(czesc.substring(pole + 2, czesc.length()));
+                                film.setProducent(part.substring(pole + 2, part.length()));
                                 break;
                             case "instrumentalista":
-                                film.setInstrumentalista(czesc.substring(pole + 2, czesc.length()));
+                                film.setInstrumentalista(part.substring(pole + 2, part.length()));
                                 break;
                             case "charakteryzacja":
-                                film.setCharakteryzacja(czesc.substring(pole + 2, czesc.length()));
+                                film.setCharakteryzacja(part.substring(pole + 2, part.length()));
                                 break;
                             case "prowadzący":
-                                film.setProwadzący(czesc.substring(pole + 2, czesc.length()));
+                                film.setProwadzący(part.substring(pole + 2, part.length()));
                                 break;
                             case "barwa":
-                                film.setBarwa(czesc.substring(pole + 2, czesc.length()));
+                                film.setBarwa(part.substring(pole + 2, part.length()));
                                 break;
                             case "jakość":
-                                film.setJakość(czesc.substring(pole + 2, czesc.length()));
+                                film.setJakość(part.substring(pole + 2, part.length()));
                                 break;
                             case "kategoria wiekowa":
-                                if (pole + 2 >= czesc.length()) {
+                                if (pole + 2 >= part.length()) {
                                 } else {
-                                    film.setKategoriaWiekowa(czesc.substring(pole + 2, czesc.length()));
+                                    film.setKategoriaWiekowa(part.substring(pole + 2, part.length()));
                                 }
                                 break;
                             case "uczestnik":
-                                film.setUczestnik(czesc.substring(pole + 2, czesc.length()));
+                                film.setUczestnik(part.substring(pole + 2, part.length()));
                                 break;
                             case "aktor":
-                                film.setAktor(czesc.substring(pole + 2, czesc.length()));
+                                film.setAktor(part.substring(pole + 2, part.length()));
                                 break;
                             case "zdjęcia":
-                                film.setZdjęcia(czesc.substring(pole + 2, czesc.length()));
+                                film.setZdjęcia(part.substring(pole + 2, part.length()));
                                 break;
                             case "realizacja":
-                                film.setRealizacja(czesc.substring(pole + 2, czesc.length()));
+                                film.setRealizacja(part.substring(pole + 2, part.length()));
                                 break;
                             case "montaż":
-                                film.setMontaż(czesc.substring(pole + 2, czesc.length()));
+                                film.setMontaż(part.substring(pole + 2, part.length()));
                                 break;
                             case "scenografia":
-                                film.setScenografia(czesc.substring(pole + 2, czesc.length()));
+                                film.setScenografia(part.substring(pole + 2, part.length()));
                                 break;
                         }
                     }
@@ -218,34 +222,28 @@ public class Parser {
             }
         }
 
-//        if (mapaFilmow.containsKey(film.getLink())) {
-//            System.out.println("BYŁOOOOOOOOOOOOOOOO");
-//        } else {
-        listaFilmow.add(film);
-////        }
-
+        filmList.add(film);
     }
 
     public void ustawIloscStron(String adrStrony) throws IOException {
         Document d = Jsoup.connect(adrStrony).get();
-        int[] nrStron = new int[20];
+        int[] nrPages = new int[20];
 
-        //odczyt ilosci stron 
-        Elements iloscStronElem = d.select(".span6.pagination");
+        Elements elem = d.select(".span6.pagination");
         int i = 0;
 
-        for (Element e : iloscStronElem.select("a")) {
-            String ostatnia = e.toString();
-            ostatnia = ostatnia.substring(21, ostatnia.length());
-            if (ostatnia.indexOf("\"") != -1) {
-                String[] c = ostatnia.split("\"");
+        for (Element e : elem.select("a")) {
+            String lastPage = e.toString();
+            lastPage = lastPage.substring(21, lastPage.length());
+            if (lastPage.indexOf("\"") != -1) {
+                String[] c = lastPage.split("\"");
                 c = c[0].split(" ");
-                ostatnia = c[0];
+                lastPage = c[0];
             }
-            nrStron[i] = Integer.parseInt(ostatnia);
+            nrPages[i] = Integer.parseInt(lastPage);
             i++;
         }
-        for (int n : nrStron) {
+        for (int n : nrPages) {
             if (n > numberOfPages) {
                 numberOfPages = n;
             }
@@ -260,7 +258,7 @@ public class Parser {
         String opis = "", opis2 = "";
         String prefix = "http://ninateka.pl";
 
-        List<String> kategorieIDane = new ArrayList<>();
+        List<String> categoriesAndData = new ArrayList<>();
 
         try {
             Document d = Jsoup.connect(adrStrony).get();
@@ -277,7 +275,7 @@ public class Parser {
                 //--------------- odczyt z drugiej strony ---------------
                 // link do drugiej strony
                 link = prefix.concat(e.select("a").unwrap().attr("href"));
-                if (!mapaFilmow.containsKey(link)) {
+                if (!mapOfFilms.containsKey(link)) {
 
                     Document d2 = Jsoup.connect(link).get();
                     Elements content2 = d2.select(".description");
@@ -295,15 +293,15 @@ public class Parser {
                     for (Element e2 : content2.select("#tabs-1 li")) {
                         String pom = zwrocKategorieIDane(e2);
                         if (pom != null) {
-                            kategorieIDane.add(zwrocKategorieIDane(e2));
+                            categoriesAndData.add(zwrocKategorieIDane(e2));
                         }
                     }
 
                     // druga zakladka
                     for (Element e2 : content2.select("#tabs-2 li")) {
-                        String druga = zwrocKategorieIDane(e2);
-                        if (druga != null) {
-                            kategorieIDane.add(druga);
+                        String secondTab = zwrocKategorieIDane(e2);
+                        if (secondTab != null) {
+                            categoriesAndData.add(secondTab);
                         }
                     }
 
@@ -335,9 +333,9 @@ public class Parser {
                     opis2 = content3.select("div").text();
 
                     //System.out.println("nie było :D ");
-                    stworzFilm(kategorieIDane, nazwa, link, img, opis, opis2, tag);
+                    stworzFilm(categoriesAndData, nazwa, link, img, opis, opis2, tag);
 
-                    kategorieIDane.clear();
+                    categoriesAndData.clear();
                     nazwa = "";
                     link = "";
                     img = "";
@@ -356,12 +354,12 @@ public class Parser {
     public void zmianaAdresow() {
         String url1 = "http://ninateka.pl/filmy?page=1";
         String[] adr = url1.split("1");
-        List<String> lista = new ArrayList<String>();
+        List<String> list = new ArrayList<String>();
 
         for (int i = 0; i < numberOfPages; i++) {
             url1 = adr[0].concat("" + (i + 1));
-            lista.add(url1);
+            list.add(url1);
         }
-        webPage = lista;
+        webPage = list;
     }
 }

@@ -47,7 +47,7 @@ public final class excel {
            
         try {          
             if (!file.exists()) {
-                System.out.println("plik nie istnieje!");
+                System.out.println("File does not exist!");
             } else {
                 br = new BufferedReader(new FileReader(fileName));
 
@@ -57,20 +57,20 @@ public final class excel {
 
                     } else {
                         int j = 0;
-                        String[] daneFilmy = line.split(cvsSplitBy);
-                        List<String> lista = new ArrayList<>();
+                        String[] filmInfo = line.split(cvsSplitBy);
+                        List<String> list = new ArrayList<>();
 
-                        for (String d : daneFilmy) {
-                            lista.add(d);
+                        for (String d : filmInfo) {
+                            list.add(d);
                         }
-                        while (lista.size() < 29) {
-                            lista.add("");
+                        while (list.size() < 29) {
+                            list.add("");
                         }
 
                         Film f = new Film();
                         for (Field fff : f.getClass().getDeclaredFields()) {
                             fff.setAccessible(true);
-                            fff.set(f, lista.get(j));
+                            fff.set(f, list.get(j));
                             j++;
                         }
                         mapaFilmow.put(f.getLink(), f);
@@ -78,7 +78,7 @@ public final class excel {
                 }
             }
         } catch (Exception e) {
-            System.out.println("blad");
+            System.out.println("error");
         }
 
         return mapaFilmow;
@@ -104,9 +104,7 @@ public final class excel {
         }
 
         try {
-
             for (Film f : listaFilmow) {
-
                 for (Field fff : f.getClass().getDeclaredFields()) {
                     String value;
                     fff.setAccessible(true);
