@@ -1,72 +1,68 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package pl.psnc.nina.harvester;
 
 public class Film {
 
-    private String nazwa;
-    private String reżyseria;
+    private String name;
+    private String directory;
     private String link;
-    private String obraz;
-    private String czasTrwania;
-    public String lektor;
-    private String scenariusz;
-    private String rokProdukcji;
-    private String język;
-    private String producent;
-    private String kategoria;
-    private String gatunek;
-    private String barwa;
-    private String jakość;
+    private String image;
+    private String duration;//czasTrwania;
+    public String  lector;//lektor
+    private String scenario;//
+    private String productionYear;//rokProdukcji
+    private String language;
+    private String producer;
+    private String category;
+    private String genre;
+    private String color;
+    private String quality;
     private String kategoriaWiekowa;
-    private String tagi;
-    private String prowadzący;
-    private String uczestnik;
-    private String aktor;
+    private String tags;
+    private String prowadzący; // ???????????????????
+    private String participant;//uczestnik // ??????????
+    private String actor;
     private String zdjęcia;
     private String realizacja;
-    private String montaż;
-    private String scenografia;
-    private String opis;
-    private String opis2;
-    private String instrumentalista;
-    private String wokalista;
-    private String charakteryzacja;
-    private String dźwięk;
+    private String editingSession; // montaz
+    private String scenography;
+    private String description;
+    private String descrition2;
+    private String instrumentalist;
+    private String vocalist;
+    private String charakteryzation;
+    private String audio; // dźwięk
 
-    public String getOpis() {
-        return opis;
+    public String getDescription() {
+        return description;
     }
 
-    public void setOpis(String opis) {
-        this.opis = opis;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getLektor() {
-        return lektor;
+    public String getLector() {
+        return lector;
     }
 
-    public void setLektor(String lektor) {
-        this.lektor = lektor;
+    public void setLector(String lector) {
+        this.lector = lector;
     }
 
-    public String getOpis2() {
-        return opis2;
+    public String getDescrition2() {
+        return descrition2;
     }
 
-    public void setOpis2(String opis2) {
-        this.opis2 = opis2;
+    public void setDescrition2(String descrition2) {
+        this.descrition2 = descrition2;
     }
 
-    public String getNazwa() {
-        return nazwa;
+    public String getName() {
+        return name;
     }
 
-    public void setNazwa(String nazwa) {
-        this.nazwa = nazwa;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLink() {
@@ -77,124 +73,124 @@ public class Film {
         this.link = link;
     }
 
-    public String getInstrumentalista() {
-        return instrumentalista;
+    public String getInstrumentalist() {
+        return instrumentalist;
     }
 
-    public void setInstrumentalista(String instrumentalista) {
-        this.instrumentalista = instrumentalista;
+    public void setInstrumentalist(String instrumentalist) {
+        this.instrumentalist = instrumentalist;
     }
 
-    public String getWokalista() {
-        return wokalista;
+    public String getVocalist() {
+        return vocalist;
     }
 
-    public void setWokalista(String wokalista) {
-        this.wokalista = wokalista;
+    public void setVocalist(String vocalist) {
+        this.vocalist = vocalist;
     }
 
-    public String getCharakteryzacja() {
-        return charakteryzacja;
+    public String getCharakteryzation() {
+        return charakteryzation;
     }
 
-    public void setCharakteryzacja(String charakteryzacja) {
-        this.charakteryzacja = charakteryzacja;
+    public void setCharakteryzation(String charakteryzation) {
+        this.charakteryzation = charakteryzation;
     }
 
-    public String getDźwięk() {
-        return dźwięk;
+    public String getAudio() {
+        return audio;
     }
 
-    public void setDźwięk(String dźwięk) {
-        this.dźwięk = dźwięk;
+    public void setAudio(String audio) {
+        this.audio = audio;
     }
 
-    public String getObraz() {
-        return obraz;
+    public String getImage() {
+        return image;
     }
 
-    public void setObraz(String obraz) {
-        this.obraz = obraz;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getReżyseria() {
-        return reżyseria;
+    public String getDirectory() {
+        return directory;
     }
 
-    public void setReżyseria(String reżyseria) {
-        this.reżyseria = reżyseria;
+    public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
-    public String getScenariusz() {
-        return scenariusz;
+    public String getScenario() {
+        return scenario;
     }
 
-    public void setScenariusz(String scenariusz) {
-        this.scenariusz = scenariusz;
+    public void setScenario(String scenario) {
+        this.scenario = scenario;
     }
 
-    public String getRokProdukcji() {
-        return rokProdukcji;
+    public String getProductionYear() {
+        return productionYear;
     }
 
-    public void setRokProdukcji(String rokProdukcji) {
-        this.rokProdukcji = rokProdukcji;
+    public void setProductionYear(String productionYear) {
+        this.productionYear = productionYear;
     }
 
-    public String getJęzyk() {
-        return język;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setJęzyk(String język) {
-        this.język = język;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public String getProducent() {
-        return producent;
+    public String getProducer() {
+        return producer;
     }
 
-    public void setProducent(String producent) {
-        this.producent = producent;
+    public void setProducer(String producer) {
+        this.producer = producer;
     }
 
-    public String getCzasTrwania() {
-        return czasTrwania;
+    public String getDuration() {
+        return duration;
     }
 
-    public void setCzasTrwania(String czasTrwania) {
-        this.czasTrwania = czasTrwania;
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
-    public String getKategoria() {
-        return kategoria;
+    public String getCategory() {
+        return category;
     }
 
-    public void setKategoria(String kategoria) {
-        this.kategoria = kategoria;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public String getGatunek() {
-        return gatunek;
+    public String getGenre() {
+        return genre;
     }
 
-    public void setGatunek(String gatunek) {
-        this.gatunek = gatunek;
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
-    public String getBarwa() {
-        return barwa;
+    public String getColor() {
+        return color;
     }
 
-    public void setBarwa(String barwa) {
-        this.barwa = barwa;
+    public void setColor(String color) {
+        this.color = color;
     }
 
-    public String getJakość() {
-        return jakość;
+    public String getQuality() {
+        return quality;
     }
 
-    public void setJakość(String jakość) {
-        this.jakość = jakość;
+    public void setQuality(String quality) {
+        this.quality = quality;
     }
 
     public String getKategoriaWiekowa() {
@@ -205,12 +201,12 @@ public class Film {
         this.kategoriaWiekowa = kategoriaWiekowa;
     }
 
-    public String getTagi() {
-        return tagi;
+    public String getTags() {
+        return tags;
     }
 
-    public void setTagi(String tagi) {
-        this.tagi = tagi;
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public String getProwadzący() {
@@ -221,12 +217,12 @@ public class Film {
         this.prowadzący = prowadzący;
     }
 
-    public String getUczestnik() {
-        return uczestnik;
+    public String getParticipant() {
+        return participant;
     }
 
-    public void setUczestnik(String uczestnik) {
-        this.uczestnik = uczestnik;
+    public void setParticipant(String participant) {
+        this.participant = participant;
     }
 
 //    public String getTwórca() {
@@ -236,12 +232,12 @@ public class Film {
 //    public void setTwórca(String twórca) {
 //        this.twórca = twórca;
 //    }
-    public String getAktor() {
-        return aktor;
+    public String getActor() {
+        return actor;
     }
 
-    public void setAktor(String aktor) {
-        this.aktor = aktor;
+    public void setActor(String actor) {
+        this.actor = actor;
     }
 
     public String getZdjęcia() {
@@ -260,20 +256,20 @@ public class Film {
         this.realizacja = realizacja;
     }
 
-    public String getMontaż() {
-        return montaż;
+    public String getEditingSession() {
+        return editingSession;
     }
 
-    public void setMontaż(String montaż) {
-        this.montaż = montaż;
+    public void setEditingSession(String editingSession) {
+        this.editingSession = editingSession;
     }
 
-    public String getScenografia() {
-        return scenografia;
+    public String getScenography() {
+        return scenography;
     }
 
-    public void setScenografia(String scenografia) {
-        this.scenografia = scenografia;
+    public void setScenography(String scenography) {
+        this.scenography = scenography;
     }
 
 }
