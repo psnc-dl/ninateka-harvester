@@ -48,10 +48,23 @@ public final class CategoriesConfig {
             if (file.exists()) {
                 FileReader fr = new FileReader(file);
                 BufferedReader reader = new BufferedReader(fr);
+
                 while ((line = reader.readLine()) != null) {
                     String line1 = line.replace(" ", "");
                     categ.add(line1);
                 }
+
+                if (categ.isEmpty()) {
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    Film ff = new Film();
+                    for (Field fff : ff.getClass().getDeclaredFields()) {
+                        bw.append(fff.getName());
+                        bw.append("\n");
+                        categ.add(fff.getName());
+                    }
+                    bw.close();
+                }
+
                 // link is obligatory, has to be in map of movies
                 if (!categ.contains("link")) {
                     categ.add("link");
@@ -59,9 +72,9 @@ public final class CategoriesConfig {
 
                 // checking if every category from configuration file are categories of Film
                 Film f = new Film();
-               
+
                 Field[] fields = f.getClass().getDeclaredFields();
-                ArrayList filmFields = new ArrayList<>(); 
+                ArrayList filmFields = new ArrayList<>();
                 for (Field ff : fields) {
                     filmFields.add(ff.getName());
                 }
@@ -75,12 +88,13 @@ public final class CategoriesConfig {
                 for (String ss : s) {
                     categ.remove(ss);
                 }
-                
+
             } else {
                 BufferedWriter bw = new BufferedWriter(fw);
                 Film ff = new Film();
                 for (Field fff : ff.getClass().getDeclaredFields()) {
                     bw.append(fff.getName() + "\n");
+                    categ.add(fff.getName());
                 }
                 bw.close();
             }

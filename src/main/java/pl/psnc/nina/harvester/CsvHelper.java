@@ -61,6 +61,7 @@ public class CsvHelper {
             if (!file.exists()) {
                 System.out.println("File does not exist!");
             } else {
+                int ia = 0;
                 while ((line = br.readLine()) != null) {
                     if (first == true) {
                         first = false;
@@ -111,22 +112,29 @@ public class CsvHelper {
                         String[] dataLine = line.split(";");
                         List<String> dList = new ArrayList<>(Arrays.asList(dataLine));
 
+                        while (dList.size() < configCategories.size()) {
+                            dList.add("");
+                        }
+
                         Film f = new Film();
                         for (int x = 0; x < dList.size(); x++) {
                             if (!toDelete.contains(x)) {
+                                if (!(x >= headerCategories.length)) {
+                                    Field fff = f.getClass().getDeclaredField(headerCategories[x]);
 
-                                Field fff = f.getClass().getDeclaredField(headerCategories[x]);
-                                fff.setAccessible(true);
-                                fff.set(f, dList.get(x));
+                                    fff.setAccessible(true);
+                                    fff.set(f, dList.get(x));
 
-                                bWriter.write(dList.get(x));
-                                bWriter.write(COMMA_DELIMITER);
+                                    bWriter.write(dList.get(x));
+                                    bWriter.write(COMMA_DELIMITER);
+                                }
                             }
                         }
 
                         filmMap.put(f.getLink(), f);
                         bWriter.write(NEW_LINE_SEPARATOR);
                     }
+                    ia++;
                 }
                 bWriter.close();
                 br.close();
