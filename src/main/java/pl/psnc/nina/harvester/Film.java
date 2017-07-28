@@ -1,4 +1,3 @@
-
 package pl.psnc.nina.harvester;
 
 public class Film {
@@ -7,9 +6,9 @@ public class Film {
     private String directory;
     private String link;
     private String image;
-    private String duration;//czasTrwania;
-    public String  lector;//lektor
-    private String scenario;//
+    private String runTime;       //czasTrwania;
+    public String lector;        //lektor
+    private String scenario;
     private String productionYear;//rokProdukcji
     private String language;
     private String producer;
@@ -17,13 +16,13 @@ public class Film {
     private String genre;
     private String color;
     private String quality;
-    private String kategoriaWiekowa;
+    private String ageRange;     // kategoria wiekowa
     private String tags;
-    private String prowadzący; // ???????????????????
-    private String participant;//uczestnik // ??????????
+    private String anchorman;   // prowadzący 
+    private String participant; //uczestnik 
     private String actor;
-    private String zdjęcia;
-    private String realizacja;
+    private String shoot;          // zdjecia
+    private String realisation;    //realizacja
     private String editingSession; // montaz
     private String scenography;
     private String description;
@@ -31,7 +30,7 @@ public class Film {
     private String instrumentalist;
     private String vocalist;
     private String charakteryzation;
-    private String audio; // dźwięk
+    private String audio;          // dźwięk
 
     public String getDescription() {
         return description;
@@ -153,12 +152,12 @@ public class Film {
         this.producer = producer;
     }
 
-    public String getDuration() {
-        return duration;
+    public String getRunTime() {
+        return runTime;
     }
 
-    public void setDuration(String duration) {
-        this.duration = duration;
+    public void setRunTime(String runTime) {
+        this.runTime = runTime;
     }
 
     public String getCategory() {
@@ -193,12 +192,12 @@ public class Film {
         this.quality = quality;
     }
 
-    public String getKategoriaWiekowa() {
-        return kategoriaWiekowa;
+    public String getAgeRange() {
+        return ageRange;
     }
 
-    public void setKategoriaWiekowa(String kategoriaWiekowa) {
-        this.kategoriaWiekowa = kategoriaWiekowa;
+    public void setAgeRange(String ageRange) {
+        this.ageRange = ageRange;
     }
 
     public String getTags() {
@@ -209,12 +208,12 @@ public class Film {
         this.tags = tags;
     }
 
-    public String getProwadzący() {
-        return prowadzący;
+    public String getAnchorman() {
+        return anchorman;
     }
 
-    public void setProwadzący(String prowadzący) {
-        this.prowadzący = prowadzący;
+    public void setAnchorman(String anchorman) {
+        this.anchorman = anchorman;
     }
 
     public String getParticipant() {
@@ -225,13 +224,6 @@ public class Film {
         this.participant = participant;
     }
 
-//    public String getTwórca() {
-//        return twórca;
-//    }
-//
-//    public void setTwórca(String twórca) {
-//        this.twórca = twórca;
-//    }
     public String getActor() {
         return actor;
     }
@@ -240,20 +232,20 @@ public class Film {
         this.actor = actor;
     }
 
-    public String getZdjęcia() {
-        return zdjęcia;
+    public String getShoot() {
+        return shoot;
     }
 
-    public void setZdjęcia(String zdjęcia) {
-        this.zdjęcia = zdjęcia;
+    public void setShoot(String shoot) {
+        this.shoot = shoot;
     }
 
-    public String getRealizacja() {
-        return realizacja;
+    public String getRealisation() {
+        return realisation;
     }
 
-    public void setRealizacja(String realizacja) {
-        this.realizacja = realizacja;
+    public void setRealisation(String realisation) {
+        this.realisation = realisation;
     }
 
     public String getEditingSession() {

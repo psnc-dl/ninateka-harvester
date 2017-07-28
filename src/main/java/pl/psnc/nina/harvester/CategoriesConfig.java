@@ -15,17 +15,19 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Laura
- */
-public class CategoriesConfig {
+public final class CategoriesConfig {
 
-    private File file;
-    private String fileName = "config.txt";
+    private final File file;
+    private final String fileName = "config.txt";
     private List<String> categories;
 
-    
+    /**
+     * Sets categories
+     *
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws IOException
+     */
     public CategoriesConfig() throws IllegalArgumentException, IllegalAccessException, IOException {
         file = new File(fileName);
         setCategories(readConfiguration());
@@ -33,9 +35,9 @@ public class CategoriesConfig {
 
     /**
      * Reads categories of film from configurarion file (config.txt)
-     * 
-     * @return list of film categories  
-     * @throws IOException 
+     *
+     * @return list of film categories
+     * @throws IOException
      */
     public List<String> readConfiguration() throws IOException {
         String line;
@@ -47,12 +49,33 @@ public class CategoriesConfig {
                 FileReader fr = new FileReader(file);
                 BufferedReader reader = new BufferedReader(fr);
                 while ((line = reader.readLine()) != null) {
-                    categ.add(line);
+                    String line1 = line.replace(" ", "");
+                    categ.add(line1);
                 }
                 // link is obligatory, has to be in map of movies
                 if (!categ.contains("link")) {
                     categ.add("link");
                 }
+
+                // checking if every category from configuration file are categories of Film
+                Film f = new Film();
+               
+                Field[] fields = f.getClass().getDeclaredFields();
+                ArrayList filmFields = new ArrayList<>(); 
+                for (Field ff : fields) {
+                    filmFields.add(ff.getName());
+                }
+
+                ArrayList<String> s = new ArrayList<>();
+                for (String categ1 : categ) {
+                    if (!filmFields.contains(categ1)) {
+                        s.add(categ1);
+                    }
+                }
+                for (String ss : s) {
+                    categ.remove(ss);
+                }
+                
             } else {
                 BufferedWriter bw = new BufferedWriter(fw);
                 Film ff = new Film();
@@ -63,7 +86,7 @@ public class CategoriesConfig {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("error");
         }
         return categ;
     }

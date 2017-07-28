@@ -1,12 +1,12 @@
 package pl.psnc.nina.harvester;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
+import java.io.FileNotFoundException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,33 +16,23 @@ import org.jsoup.select.Elements;
 
 public class Parser {
 
-    public int i;
-    public List<String> webPage = new ArrayList<>();
     private int numberOfPages;
-
-    private List filmList = new ArrayList(); //nowe odczytane filmy
-    private List categories = new ArrayList();
+    private List<String> webPage = new ArrayList<>();
+    private List filmList = new ArrayList();
     private Map<String, Film> mapOfFilms = new LinkedHashMap<>();
 
     public Parser() throws IOException, FileNotFoundException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InterruptedException, InvalidFormatException {
-        CategoriesConfig c = new CategoriesConfig();
-        categories = c.getCategories();
-        odczyt();
-    }
 
-    public void odczyt() throws IOException, FileNotFoundException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InterruptedException, InvalidFormatException {
-
-        setNumberOfPages("http://ninateka.pl/filmy?page=1");
+        setNumberOfPages();
         System.out.println("number of pages: " + numberOfPages);
         creatingAddresses();
 
-        excel e = new excel();
-        mapOfFilms = e.readCsv();
 
-        odczytajDaneIZapisz(this, e);
+        parsingForAllPages();
     }
 
     /**
+     * Triggers the parsing for all of the pages writes them to cvs file
      *
      * @param t
      * @param e
@@ -52,30 +42,29 @@ public class Parser {
      * @throws IllegalAccessException
      * @throws InterruptedException
      */
-    public void odczytajDaneIZapisz(Parser t, excel e) throws IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InterruptedException {
-
-        long start = System.currentTimeMillis();
-
-        // !!!!!!!!
-        for (int i = 1; i < 2; i++) {
-
-            t.parsePage(webPage.get(i));
-            e.readCsv();
-            e.writeCsv(filmList);
+    private void parsingForAllPages() throws IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InterruptedException {
+       
+        CsvHelper d = new CsvHelper();
+        mapOfFilms = d.readFile();
+        System.out.println("number of read films: " + mapOfFilms.size());
+        
+        
+        for (int i = 0; i < numberOfPages; i++) {
+            parsePage(webPage.get(i));
+            d.writeCsv(filmList);
+            System.out.println("page read " + i);
             filmList.clear();
         }
-        long end = System.currentTimeMillis();
-        System.out.println("total time: " + (end - start));
+        d.toTheEnd();
     }
 
     /**
-     * Parse element from web page 
-     * taking data and data category from it
-     * 
-     * @param e2 one html <li> part //// ?????????? 
-     * @return one categorie and data  name;Molier ????????????
+     * Parse element from web page taking data and data category from it
+     *
+     * @param e2 one <li> part from web page
+     * @return one categorie and data
      */
-    public String zwrocKategorieIDane(Element e2) {
+    private String parseElement(Element e2) {
         String data = "";
         String categoryAndData = null;
         String[] temp = e2.toString().split("span>");
@@ -122,9 +111,9 @@ public class Parser {
     }
 
     /**
-     * Setting fields of newly created film
+     * Setting fields of newly created film Adds the film to filmList
      *
-     * @param mul ?????????/
+     * @param categoriesAndData ?????????/
      * @param name
      * @param link
      * @param img
@@ -135,7 +124,7 @@ public class Parser {
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    public void createFilm(List<String> mul, String name, String link, String img, String description, String description2, String tags) throws IOException, IllegalArgumentException, IllegalAccessException {
+    public void createFilm(List<String> categoriesAndData, String name, String link, String img, String description, String description2, String tags) throws IOException, IllegalArgumentException, IllegalAccessException {
 
         Film film = new Film();
         Document d2 = Jsoup.connect(link).get();
@@ -145,9 +134,9 @@ public class Parser {
             name = name.substring(0, index);
         }
 
-        for (int j = 0; j < mul.size(); j++) {
-            if (mul.get(j) != null) {
-                String part = mul.get(j);
+        for (int j = 0; j < categoriesAndData.size(); j++) {
+            if (categoriesAndData.get(j) != null) {
+                String part = categoriesAndData.get(j);
                 if (part != null) {
                     int pole = part.indexOf(":");
 
@@ -155,7 +144,7 @@ public class Parser {
 
                         switch (part.substring(0, pole)) {
                             case "czas trwania":
-                                film.setDuration(part.substring(pole + 2, part.length()));
+                                film.setRunTime(part.substring(pole + 2, part.length()));
                                 break;
                             case "lektor":
                                 film.setLector(part.substring(pole + 2, part.length()));
@@ -191,7 +180,7 @@ public class Parser {
                                 film.setCharakteryzation(part.substring(pole + 2, part.length()));
                                 break;
                             case "prowadzący":
-                                film.setProwadzący(part.substring(pole + 2, part.length()));
+                                film.setAnchorman(part.substring(pole + 2, part.length()));
                                 break;
                             case "barwa":
                                 film.setColor(part.substring(pole + 2, part.length()));
@@ -202,7 +191,7 @@ public class Parser {
                             case "kategoria wiekowa":
                                 if (pole + 2 >= part.length()) {
                                 } else {
-                                    film.setKategoriaWiekowa(part.substring(pole + 2, part.length()));
+                                    film.setAgeRange(part.substring(pole + 2, part.length()));
                                 }
                                 break;
                             case "uczestnik":
@@ -212,10 +201,10 @@ public class Parser {
                                 film.setActor(part.substring(pole + 2, part.length()));
                                 break;
                             case "zdjęcia":
-                                film.setZdjęcia(part.substring(pole + 2, part.length()));
+                                film.setShoot(part.substring(pole + 2, part.length()));
                                 break;
                             case "realizacja":
-                                film.setRealizacja(part.substring(pole + 2, part.length()));
+                                film.setRealisation(part.substring(pole + 2, part.length()));
                                 break;
                             case "montaż":
                                 film.setEditingSession(part.substring(pole + 2, part.length()));
@@ -252,9 +241,11 @@ public class Parser {
      * @param adrStrony
      * @throws IOException
      */
-    public void setNumberOfPages(String adrStrony) throws IOException {
-        Document d = Jsoup.connect(adrStrony).get();
-        int[] nrPages = new int[20];
+    private void setNumberOfPages() throws IOException {
+
+        String webAddress = "http://ninateka.pl/filmy?page=1";
+        Document d = Jsoup.connect(webAddress).get();
+        ArrayList<Integer> nrPages = new ArrayList<>();
 
         Elements elem = d.select(".span6.pagination");
         int i = 0;
@@ -267,7 +258,7 @@ public class Parser {
                 c = c[0].split(" ");
                 lastPage = c[0];
             }
-            nrPages[i] = Integer.parseInt(lastPage);
+            nrPages.add(Integer.parseInt(lastPage));
             i++;
         }
         for (int n : nrPages) {
@@ -278,14 +269,14 @@ public class Parser {
     }
 
     /**
-     * Parsing data form web page calls ??????? the method createFilm
+     * Parsing data form web page calls the method createFilm
      *
      * @param webPageAddress addres of web page that is going to be parsed
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      * @throws IOException
      */
-    public void parsePage(String webPageAddress) throws IllegalArgumentException, IllegalAccessException, IOException {
+    private void parsePage(String webPageAddress) throws IllegalArgumentException, IllegalAccessException, IOException {
 
         String link;
         String img = "", tag = "";
@@ -296,7 +287,6 @@ public class Parser {
 
         try {
             Document d = Jsoup.connect(webPageAddress).get();
-            // int[] nrStron = new int[20];
 
             Elements content = d.select(".span12.movieListS ul li");
             for (Element e : content) {
@@ -325,15 +315,15 @@ public class Parser {
 
                     // categories
                     for (Element e2 : content2.select("#tabs-1 li")) {
-                        String pom = zwrocKategorieIDane(e2);
+                        String pom = parseElement(e2);
                         if (pom != null) {
-                            categoriesAndData.add(zwrocKategorieIDane(e2));
+                            categoriesAndData.add(parseElement(e2));
                         }
                     }
 
                     // second tab
                     for (Element e2 : content2.select("#tabs-2 li")) {
-                        String secondTab = zwrocKategorieIDane(e2);
+                        String secondTab = parseElement(e2);
                         if (secondTab != null) {
                             categoriesAndData.add(secondTab);
                         }
@@ -346,7 +336,6 @@ public class Parser {
 
                     // tags
                     for (Element e2 : content2.select("#tags li")) {
-
                         String tag1 = "";
                         tag1 = e2.toString();
                         String[] ttt = tag1.split("<");
@@ -355,6 +344,10 @@ public class Parser {
                         if (tttt.length >= 2) {
                             tag1 = tttt[1];
 
+                            //if(tttt[1].contains("&amp;")){
+                            tttt[1] = tttt[1].replaceAll("&amp;", "&");
+
+                            //                          
                             if (tag.equals("")) {
                                 tag = "#" + tag1;
                             } else {
@@ -384,13 +377,12 @@ public class Parser {
     }
 
     /**
-     * Creates all the addresses to pages difhwoehfwohwofjep on Ninateka
-     * W)wfoowfoepfjwpjpw ????????????????????
+     * Creates all the addresses to pages
      */
-    public void creatingAddresses() {
+    private void creatingAddresses() {
         String url1 = "http://ninateka.pl/filmy?page=1";
         String[] adr = url1.split("1");
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         for (int i = 0; i < numberOfPages; i++) {
             url1 = adr[0].concat("" + (i + 1));
