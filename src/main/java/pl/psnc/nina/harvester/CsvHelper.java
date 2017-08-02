@@ -61,7 +61,6 @@ public class CsvHelper {
             if (!file.exists()) {
                 System.out.println("File does not exist!");
             } else {
-                int ia = 0;
                 while ((line = br.readLine()) != null) {
                     if (first == true) {
                         first = false;
@@ -103,6 +102,7 @@ public class CsvHelper {
                             } else if ((counter + toDelete.size()) == configCategories.size()) {
                             } // there are columns to delete
                             else {
+                                System.out.println("break !");
                                 // to few columns, everything has to be parsed from the beginning
                                 break;
                             }
@@ -134,7 +134,6 @@ public class CsvHelper {
                         filmMap.put(f.getLink(), f);
                         bWriter.write(NEW_LINE_SEPARATOR);
                     }
-                    ia++;
                 }
                 bWriter.close();
                 br.close();
@@ -161,37 +160,31 @@ public class CsvHelper {
             UnsupportedEncodingException, IOException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException {
 
         Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFileName, true), "UTF-8"));
+        System.out.println("writing new " + filmList.size() + " film/films");
 
         try {
             for (Film f : filmList) {
-                for (int x = 0; x < headerCategories.length; x++) {
-                    if (!toDelete.contains(x)) {
-                        String value;
-                        Field fff = f.getClass().getDeclaredField(headerCategories[x]);
+                for (Field fff : f.getClass().getDeclaredFields()) {
+                    if (configCategories.contains(fff.getName())) {
                         fff.setAccessible(true);
 
-                        Object v = fff.get(f);
-                        value = (String) v;
-
-                        if (value != null) {
-                            out.write(value);
-                        }
+                        out.write((String) fff.get(f));
                         out.write(COMMA_DELIMITER);
                     }
                 }
                 out.write(NEW_LINE_SEPARATOR);
             }
-            out.close();
-
         } finally {
             out.close();
         }
+        out.close();
     }
 
-    public void toTheEnd() {
+    public void changeFileName() {
         if (file.exists()) {
             file.delete();
         }
         boolean isMoved = outputFile.renameTo(new File("inputFile.csv"));
+        System.out.println("renamed: " + isMoved);
     }
 }

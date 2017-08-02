@@ -25,9 +25,8 @@ public class Parser {
 
         setNumberOfPages();
         System.out.println("number of pages: " + numberOfPages);
+
         creatingAddresses();
-
-
         parsingForAllPages();
     }
 
@@ -43,19 +42,23 @@ public class Parser {
      * @throws InterruptedException
      */
     private void parsingForAllPages() throws IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InterruptedException {
-       
+
         CsvHelper d = new CsvHelper();
         mapOfFilms = d.readFile();
         System.out.println("number of read films: " + mapOfFilms.size());
-        
-        
+
         for (int i = 0; i < numberOfPages; i++) {
+
             parsePage(webPage.get(i));
-            d.writeCsv(filmList);
-            System.out.println("page read " + i);
+            if (filmList.size() > 0) {
+                d.writeCsv(filmList);
+            }
+            if (i % 10 == 0) {
+                System.out.println("page read " + i);
+            }
             filmList.clear();
         }
-        d.toTheEnd();
+        d.changeFileName();
     }
 
     /**
@@ -218,6 +221,10 @@ public class Parser {
             }
         }
 
+        if (name.contains(";-)")) {
+            name = name.replace(";-)", "");
+        }
+
         film.setName(name);
         film.setImage(img);
         film.setLink(link);
@@ -317,7 +324,11 @@ public class Parser {
                     for (Element e2 : content2.select("#tabs-1 li")) {
                         String pom = parseElement(e2);
                         if (pom != null) {
-                            categoriesAndData.add(parseElement(e2));
+
+                            if (pom.contains(",&nbsp;")) {
+                                pom = pom.replace(",&nbsp;", ",");
+                            }
+                            categoriesAndData.add(pom);
                         }
                     }
 
@@ -325,6 +336,10 @@ public class Parser {
                     for (Element e2 : content2.select("#tabs-2 li")) {
                         String secondTab = parseElement(e2);
                         if (secondTab != null) {
+
+                            if (secondTab.contains(",&nbsp;")) {
+                                secondTab = secondTab.replace(",&nbsp;", ",");
+                            }
                             categoriesAndData.add(secondTab);
                         }
                     }
